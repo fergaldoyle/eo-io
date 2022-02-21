@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.idea
+.venv
+notebooks/
+eo-io/config/*
+!eo-io/config/
+!eo-io/config/example.yaml
+!.gitignore
+deploy.zip
