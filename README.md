@@ -1,7 +1,7 @@
 # eo-io
 Read and write to an S3 object store
 
-See Store Dataset) below to write to dataset, e.g. for use with eo-io the eoain processing chain.
+See Store Dataset below to write to dataset, e.g. for use with eo-io the eoain processing chain.
 
 See Store Sentinel-Hub Data below for use with the Sentinel-Hub API, e.g. for the eo-custom-scripts processing chain.
 
