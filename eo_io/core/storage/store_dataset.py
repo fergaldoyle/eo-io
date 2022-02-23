@@ -20,6 +20,9 @@ from ..utils.resample import Resample
 
 
 class BaseWriter(abc.ABC):
+    """
+    Upload files to S3
+    """
 
     def __init__(self, store, data, top_level_directory, product_identifier, extension=''):
         self.store = store
@@ -46,12 +49,18 @@ class BaseWriter(abc.ABC):
 
 
 class GeoTiffWriter(BaseWriter):
+    """
+    Create GeoTIFF using Rasterio writer and upload to S3
+    """
 
     def write(self, full_path):
         self.data.rio.to_raster(full_path)
 
 
 class SceneGeoTiffWriter(BaseWriter):
+    """
+    Create GeoTIFF using Satpy and upload to S3
+    """
 
     def write(self, full_path):
         name = self.data.keys()[0]
@@ -60,6 +69,9 @@ class SceneGeoTiffWriter(BaseWriter):
 
 
 class MetaDataWriter(BaseWriter):
+    """
+    Upload metadata to S3
+    """
 
     def write(self, full_path):
         with open(full_path, 'w') as f:
@@ -67,19 +79,19 @@ class MetaDataWriter(BaseWriter):
 
 
 class ZarrWriter(BaseWriter):
+    """
+    Save data to Zarr on S3
+    """
 
     def _product_path(self, info, extension):
         return join(self.top_level_directory, info['platform'], info['instrument'], info['processingLevel'], 'zarr')
 
     def write(self, full_path):
         # ds_store = self.store.read_zarr()
-        try:
-            self.data.attrs = {k: v for k, v in self.data.attrs.items() if
-                               isinstance(v, (str, int, float, np.ndarray, list, tuple))}
-            ds = self.data.to_dataset(name=self.data.attrs['name'])
-            self.store.to_zarr(ds, full_path)
-        except:
-            raise
+        self.data.attrs = {k: v for k, v in self.data.attrs.items() if
+                           isinstance(v, (str, int, float, np.ndarray, list, tuple))}
+        ds = self.data.to_dataset(name=self.data.attrs['name'])
+        self.store.to_zarr(ds, full_path)
         return self
 
     def to_store(self):
@@ -88,9 +100,12 @@ class ZarrWriter(BaseWriter):
 
 
 class Store:
+    """
+    Resample dataset, store both metadata and data on S3
+    """
 
-    def __init__(self, platform, store, product_directory):
-        self.platform = platform
+    def __init__(self, config_dict, store, product_directory):
+        self.config_dict = config_dict
         self.top_level_directory = product_directory
         self.store = store
         self._dataarray = None
@@ -117,6 +132,8 @@ class Store:
                 self.proj_string = datacube.attrs['proj_string']
                 self.shape = datacube.attrs['shape']
                 self.area_extent = datacube.attrs['area_extent']
+            else:
+                raise ValueError('No dataset stored')
 
     def resample(self):
         self._set_area_info()
@@ -153,6 +170,11 @@ class Store:
         return self
 
     def to_zarr(self):
+        self.add_attributes_to_dataset()
+        try:
+            self.resample()
+        except ValueError:
+            pass  # dataset does not exist
         writer = ZarrWriter(self.store, self._dataarray, self.top_level_directory, self._info)
         writer.to_store()
         self.file_path = writer.file_path
@@ -191,23 +213,15 @@ class StoreScene(Store):
         return self
 
 
-class Stores:
+def store(dataset, product_name, info):
 
-    def __init__(self):
-        self.config = configuration()
+    config = configuration()
+    if isinstance(dataset, Scene):
+        store_cls = StoreScene  # A Satpy Scene
+    else:
+        store_cls = Store
 
-    def get_store(self, product_name, dataset, info):
-        store = self._get_store(product_name, dataset)
-        store.dataset = dataset
-        store.info = info
-        return store
-
-    @functools.lru_cache
-    def _get_store(self, product_name, dataset):
-        store = ReadWriteData(self.config)
-        if isinstance(dataset, Scene):
-            # A Satpy Scene
-            store_cls = StoreScene
-        else:
-            store_cls = Store
-        return store_cls(self.config, store, product_name)
+    store_ = store_cls(config, ReadWriteData(config), product_name)
+    store_.dataset = dataset
+    store_.info = info
+    return store_

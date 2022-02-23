@@ -73,7 +73,10 @@ class ReadWriteZarr(ObjectStoreInterface):
         file_sys_io = self._s3_file_system(obj_name)
 
         dataset['time'] = dataset['time'].astype(int)
-        del dataset['crs']
+        try:
+            del dataset['crs']
+        except KeyError:
+            pass
         if not any(self.resource_loc.Bucket(self.bucketname).objects.filter(
                 Prefix=key_name_zarr)):
             compressor = zarr.Blosc(cname='zstd', clevel=3, shuffle=2)
@@ -82,7 +85,7 @@ class ReadWriteZarr(ObjectStoreInterface):
             dataset.to_zarr(store=file_sys_io, encoding=encodings, consolidated=True)
         else:
             dataset.to_zarr(store=file_sys_io, mode='a', append_dim=append_dim,
-                            consolidated=True, compute=False, storage_options={'overwrite': True})
+                            consolidated=True, compute=False)
         return obj_name
 
     def read_zarr(self, key_name_zarr):
