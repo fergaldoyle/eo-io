@@ -1,13 +1,19 @@
 # eo-io
 Read and write to an S3 object store
 
-See Store Dataset below to write to dataset, e.g. for use with eo-io the eoain processing chain.
+See Store Dataset) below to write to dataset, e.g. for use with eo-io the eoain processing chain.
 
-See Store Sentinel-Hub Data for use with the Sentinel-Hub API, e.g. for the eo-custom-scripts processing chain.
+See Store Sentinel-Hub Data below for use with the Sentinel-Hub API, e.g. for the eo-custom-scripts processing chain.
+
+The 
 
 See [eo-custom-scripts](https://github.com/ECHOESProj/eo-custom-scripts) 
-and [eoain](https://github.com/ECHOESProj/eoian) for use of eo-io. 
+and [eoain](https://github.com/ECHOESProj/eoian) for example of eo-io use. 
 
+### Credentials
+
+The credential can be obtained from the Compass Informatics password manager, under "eo-custom-scripts configuration files".
+Unzip the config files in there and put the yaml files in the home directory in a directory called eoconfig.
 
 ## Store Dataset
 
