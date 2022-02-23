@@ -1,16 +1,31 @@
 # eo-io
 Read and write to an S3 object store
 
-eoconfig
 
-The 
+## Store dataset
+
+Firstly import the eo_io package
 
     import eo_io
-    data_stores = eo_io.store_dataset.Stores()
-    store = data_stores.insert_dataset(dataset, name, info)
+
+Initialise the data store, with the Xarray dataset, 
+
+    store = eo_io.store_dataset.store(dataset, name, info)
+
+Write the data to a GeoTIFF and save the data in the object store
+
     store.to_tiff()
+
+Write the metadata to a JSON file and save the data in the object store
+
     store.metadata_to_json()
+
+Save the data in the Zarr format on the object store 
+    
     store.to_zarr()
 
 
-    eo_io.store_geotiff.ToS3(storage, processing_module, frequency, request_func, testing).to_storage()
+
+## Store Sentinel-Hub data
+
+    storage = eo_io.ReadWriteData(config_s3)

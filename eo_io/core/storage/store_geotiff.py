@@ -7,14 +7,16 @@ from datetime import datetime
 from glob import glob
 from os.path import join, basename
 import logging
+import eo_io
 
 from osgeo import gdal
 
 
 class ToS3:
 
-    def __init__(self, storage, processing_module, frequency, request_func, testing=False):
-        self.storage = storage
+    def __init__(self, processing_module, frequency, request_func, testing=False):
+        config_s3 = eo_io.configuration()
+        self.storage = eo_io.ReadWriteData(config_s3)
         self.processing_module = processing_module
         self.frequency = frequency
         self.request_func = request_func
