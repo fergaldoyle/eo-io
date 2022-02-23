@@ -22,6 +22,7 @@ class ToS3:
         self.request_func = request_func
         self.info = None
         self.testing = testing
+        self.object_names = self.to_storage()
 
     @staticmethod
     def _product_path(product_identifier, extension):
@@ -88,7 +89,9 @@ class ToS3:
                         dataset = gdal.Open(local_fname)
                         self.validate_geotiff(dataset)
                         self.compress_geotiff(dataset, local_fname)
-                    object_names.append(self.storage.upload_file(local_fname, self.object_name(request, local_fname)))
+                    prod_name = self.storage.upload_file(local_fname, self.object_name(request, local_fname))
+                    object_names.append(prod_name)
+                    print('s3-location: ' + ' '.join(prod_name))
                 except ValueError:
                     logging.info(f"Skipping {local_fname} as all the bands values are the same value")
                     if self.testing:

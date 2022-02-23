@@ -1,8 +1,11 @@
 # eo-io
 Read and write to an S3 object store
 
+ee Store Dataset below to write to dataset, e.g. for use with eo-io the eoain processing chain.
 
-## Store dataset
+See Store Sentinel-Hub Data for use with the Sentinel-Hub API, e.g. for the eo-custom-scripts processing chain.
+
+## Store Dataset
 
 Firstly import the eo_io package
 
@@ -26,6 +29,13 @@ Save the data in the Zarr format on the object store
 
 
 
-## Store Sentinel-Hub data
+## Store Sentinel-Hub Data
 
-    storage = eo_io.ReadWriteData(config_s3)
+
+    import eo_io
+
+    store = eo_io.store_geotiff.ToS3(processing_module, frequency, request_func, testing)
+    for prod_name in store.to_storage():
+        print('s3-location: ' + ' '.join(prod_name))
+        yield prod_name
+
