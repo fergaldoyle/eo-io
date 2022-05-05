@@ -27,7 +27,6 @@ class ToS3:
         self.request_func = request_func
         self.info = None
         self.testing = testing
-        self.object_names = self.to_storage()
 
     @staticmethod
     def _product_path(product_identifier, extension):

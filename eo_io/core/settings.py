@@ -95,6 +95,13 @@ def configuration():
         raise IOError('Could not determine the platform')
 
     config = Configuration(**{**platform_settings, **data_source_platform})
+
+    # try:
+    #     os.environ['SH_CLIENT_ID'] = config.sh_client_id
+    #     os.environ['SH_CLIENT_SECRET'] = config.sh_client_secret
+    # except AttributeError:
+    #     print('Sentinel-Hub credentials missing from configuration file')
+
     return config
 
 

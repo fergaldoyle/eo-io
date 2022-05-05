@@ -1,11 +1,11 @@
 import pytest
-from eo_io import ReadWriteZarr
+from eo_io import ReadWriteData
 
 import eo_io
 import xarray as xr
 import numpy as np
 
-print(ReadWriteZarr)
+print(ReadWriteData)
 config_s3 = eo_io.configuration()
 
 
@@ -26,6 +26,6 @@ def test_write(remove_objects):
                       dims=("x", "y", 'time'),
                       coords={"x": [1, 2, 3], "y": [1, 2, 3], "time": [1, 2]})
     ds = xr.Dataset({'test': da})
-    store = eo_io.ReadWriteZarr(config_s3)
+    store = eo_io.ReadWriteData(config_s3)
     store.to_zarr(ds, '_tests')
     assert ds == store.read_zarr('_tests')
