@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 import urllib
 from socket import timeout
+from botocore.client import Config  # Do not remove: used in eval
 from eo_io.core.tools import read_yaml
 from glob import glob
 from os.path import join
