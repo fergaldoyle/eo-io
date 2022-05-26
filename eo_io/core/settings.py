@@ -4,11 +4,9 @@
 from dataclasses import dataclass
 import urllib
 from socket import timeout
-from botocore.client import Config
 from eo_io.core.tools import read_yaml
 from glob import glob
 from os.path import join
-from pathlib import Path
 import os
 
 
@@ -35,6 +33,7 @@ class Configuration:
         If we get some response from the endpoint_url_local then we know we are on that
         platform.
         """
+        print(f'Trying endpoint: {self.endpoint_url_local}')
         try:
             status = urllib.request.urlopen(self.endpoint_url_local, timeout=2).status == 200
         except urllib.error.HTTPError:
@@ -43,6 +42,7 @@ class Configuration:
             status = False
         except timeout:
             status = False
+        print(f'Endpoint status')
         return status
 
     def am_i_on_this_platform(self) -> bool:
