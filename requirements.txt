@@ -7,3 +7,8 @@ PyYAML
 pytest
 numpy
 click
+s3fs
+rioxarray
+satpy
+python-geotiepoints
+defusedxml
