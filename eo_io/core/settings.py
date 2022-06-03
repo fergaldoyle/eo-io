@@ -28,7 +28,7 @@ class Configuration:
 
 def configuration():
     home_dir = os.path.expanduser("~")
-    file_name = join(home_dir, 'eoconfig', 'config_eo_service.yml')
+    file_name = join(home_dir, 'config_eo_service.yml')
     config_yaml = read_yaml(file_name)
     platform_name = list(config_yaml.keys())[0]
     platform_settings = config_yaml[platform_name]['storage']
