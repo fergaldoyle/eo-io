@@ -27,6 +27,7 @@ class ObjectStoreInterface:
         self.resource_ext = self._resource(loc_ext='external')
         self.client_loc = self._client(loc_ext='local')
         self.client_ext = self._client(loc_ext='external')
+        self.client_loc.create_bucket(Bucket=self.bucketname)
 
     def _resource(self, loc_ext='local'):
         return boto3.resource('s3', endpoint_url=self.endpoints[loc_ext], **self.credentials)
