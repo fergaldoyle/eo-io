@@ -80,24 +80,27 @@ class ToS3:
         try:
             # Check that all the values are not all the same for each band
             assert not all([(i[0] == i).all() for i in (r, g, b, a) if i is not None])
-        except:
-            raise ValueError("All the bands 0 or 255")
+        except AssertionError:
+            raise AssertionError("All the bands 0 or 255")
 
     def to_storage(self):
         with tempfile.TemporaryDirectory() as tempdir:
             request = self.get_data(tempdir)
             object_names = []
-            for local_fname in glob(join(tempdir, '*', '*.*')):
-                try:
-                    if local_fname.endswith('.tiff'):
-                        dataset = gdal.Open(local_fname)
-                        self.validate_geotiff(dataset)
-                        self.compress_geotiff(dataset, local_fname)
-                    prod_name = self.storage.upload_file(local_fname, self.object_name(request, local_fname))
-                    object_names.append(prod_name)
-                    print('s3-location: ' + ' '.join(prod_name))
-                except ValueError:
-                    logging.info(f"Skipping {local_fname} as all the bands values are the same value")
-                    if self.testing:
-                        raise
+            dirname = glob(join(tempdir, '*'))[0]
+            fn_tiff = join(dirname, 'response.tiff')
+            fn_json = join(dirname, 'request.json')
+            try:
+                dataset = gdal.Open(fn_tiff)
+                self.validate_geotiff(dataset)
+                self.compress_geotiff(dataset, fn_tiff)
+                store_name_tiff = self.storage.upload_file(fn_tiff, self.object_name(request, fn_tiff))
+                store_name_json = self.storage.upload_file(fn_json, self.object_name(request, fn_json))
+                object_names.append(store_name_tiff)
+                object_names.append(store_name_json)
+                print('s3-location: ' + ' '.join(store_name_tiff))
+            except AssertionError:
+                logging.info(f"Skipping {fn_tiff} as all the bands values are the same value")
+                if self.testing:
+                    raise
             return object_names
