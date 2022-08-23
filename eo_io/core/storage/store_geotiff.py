@@ -33,8 +33,11 @@ class ToS3:
         product_path = '/'.join(product_identifier.split('/')[2:])
         return os.path.splitext(product_path)[0] + extension
 
-    def get_data(self, tempdir):
-        return self.request_func(tempdir)
+    def get_request(self, tempdir):
+        request = self.request_func(tempdir)
+        if request is None:
+            raise ValueError('No data')
+        return request
 
     def object_name(self, request, local_fname):
         input = request.payload['input']['data'][0]
@@ -85,12 +88,12 @@ class ToS3:
 
     def to_storage(self):
         with tempfile.TemporaryDirectory() as tempdir:
-            request = self.get_data(tempdir)
             object_names = []
-            dirname = glob(join(tempdir, '*'))[0]
-            fn_tiff = join(dirname, 'response.tiff')
-            fn_json = join(dirname, 'request.json')
             try:
+                request = self.get_request(tempdir)
+                dirname = glob(join(tempdir, '*'))[0]
+                fn_tiff = join(dirname, 'response.tiff')
+                fn_json = join(dirname, 'request.json')
                 dataset = gdal.Open(fn_tiff)
                 self.validate_geotiff(dataset)
                 self.compress_geotiff(dataset, fn_tiff)
@@ -100,7 +103,9 @@ class ToS3:
                 object_names.append(store_name_json)
                 print('s3-location: ' + ' '.join(store_name_tiff))
             except AssertionError:
-                logging.info(f"Skipping {fn_tiff} as all the bands values are the same value")
+                logging.info(f"Skipping {tempdir}: all the bands values are the same value")
                 if self.testing:
                     raise
+            except ValueError:
+                logging.info(f"Skipping {tempdir}L no data for this date interval")
             return object_names
