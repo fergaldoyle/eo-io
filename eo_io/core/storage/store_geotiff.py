@@ -106,6 +106,7 @@ class ToS3:
                 logging.info(f"Skipping {tempdir}: all the bands values are the same value")
                 if self.testing:
                     raise
-            except ValueError:
-                logging.info(f"Skipping {tempdir}L no data for this date interval")
+            except ValueError as verr:
+                logging.info(verr)
+                logging.info(f"Skipping {tempdir} no data for this date interval")
             return object_names
