@@ -10,6 +10,9 @@ from satpy.scene import Scene
 from .s3_interface import ReadWriteData
 from ..settings import configuration
 from .writers import MetaDataWriter, GeoTiffWriter, SceneGeoTiffWriter, ZarrWriter
+from typing import Union
+import xarray as xr
+import satpy
 
 
 class Store:
@@ -77,7 +80,7 @@ class StoreScene(Store):
         return list(SceneGeoTiffWriter(self.store, self.scene, self.product_path + '.tif'))
 
 
-def store(dataset: "Union[xr.Dataset, satpy.Dataset, str]", metadata: object):
+def store(dataset: Union[xr.Dataset, "satpy.Dataset", str], metadata: object):
     config = configuration()
     if isinstance(dataset, Scene):
         store_cls = StoreScene  # A Satpy Scene

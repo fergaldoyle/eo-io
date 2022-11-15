@@ -14,7 +14,7 @@ and [eoain](https://github.com/ECHOESProj/eoian) for example of eo-io use.
 The credential can be obtained from the Compass Informatics password manager, under "eo-custom-scripts configuration files".
 Unzip the config files in there and put the yaml files in the home directory in a directory called eoconfig.
 
-## Store Dataset
+### Store Dataset
 
 Firstly import the eo_io package
 
@@ -24,7 +24,7 @@ Initialise the data store, with the Xarray dataset,
 
     store = eo_io.store_dataset.store(dataset, name, info)
 where dataset is and xarray dataset, name is the name of the processing chain and info is a dictionary containing 
-information about source products (from EODag).
+information about source products (from [EODag](https://eodag.readthedocs.io/)).
 
 Write the data to a GeoTIFF and save the data in the object store
 
@@ -38,9 +38,9 @@ Save the data in the Zarr format on the object store
     
     store.to_zarr()
 
+Note that the to_zarr() method is experimental, and may cause errors. 
 
-
-## Store Sentinel-Hub Data
+### Store Sentinel-Hub Data
 
 
     import eo_io
