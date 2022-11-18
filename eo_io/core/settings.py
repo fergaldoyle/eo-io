@@ -1,6 +1,3 @@
-#  Copyright (c) 2022.
-#  The ECHOES Project (https://echoesproj.eu/) / Compass Informatics
-
 from dataclasses import dataclass
 from botocore.client import Config  # Do not remove: used in eval
 from eo_io.core.tools import read_yaml

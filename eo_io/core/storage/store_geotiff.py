@@ -1,6 +1,3 @@
-#  Copyright (c) 2022.
-#  The ECHOES Project (https://echoesproj.eu/) / Compass Informatics
-
 """
 Post process and insert data from Sentinel-Hub API into S3 storage
 """

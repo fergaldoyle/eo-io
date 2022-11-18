@@ -1,6 +1,3 @@
-#  Copyright (c) 2022.
-#  The ECHOES Project (https://echoesproj.eu/) / Compass Informatics
-
 import numpy as np
 import xarray as xr
 from pyresample import kd_tree, geometry
