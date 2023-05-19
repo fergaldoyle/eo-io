@@ -50,7 +50,7 @@ class ToS3:
             mosaicking = 'nomosaicking'
         fname = fname.replace('response', mosaicking)
         fname = fname.replace('request', mosaicking)
-        name_parts = [f'BBOX({bbox})', self.processing_module, instrument, self.frequency, f'{start}-{end}', fname]
+        name_parts = [f'TEST_BBOX({bbox})', self.processing_module, instrument, self.frequency, f'{start}-{end}', fname]
         if self.testing:
             name_parts = ['_test'] + name_parts
         return join(*name_parts)
@@ -93,7 +93,7 @@ class ToS3:
                 fn_json = join(dirname, 'request.json')
                 dataset = gdal.Open(fn_tiff)
                 self.validate_geotiff(dataset)
-                self.compress_geotiff(dataset, fn_tiff)
+                #self.compress_geotiff(dataset, fn_tiff)
                 store_name_tiff = self.storage.upload_file(fn_tiff, self.object_name(request, fn_tiff))
                 store_name_json = self.storage.upload_file(fn_json, self.object_name(request, fn_json))
                 object_names.append(store_name_tiff)
